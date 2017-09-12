@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+<!-- 把Struts的action交给spring托管 -->
+	<constant name="struts.objectFactory" value="spring"/>
+	<!-- 关闭动态链接 -->
+	<constant name="struts.enable.DynamicMethodInvocation" value="false" />
+	<!-- 开发者模式 -->
+	<constant name="struts.devMode" value="true" />
+	<!-- 统一处理表单的主题样式 -->
+	<!-- struts.ui.theme=xhtml默认值 -->
+	<constant name="struts.ui.theme" value="simple" />
+
+<!--**************************************** 用户管理 ******************************************* -->
+	<package name="user" extends="struts-default">
+		<action name="user_*" class="userAction" method="{1}">
+			<result name="success" type="redirect">/index_user.jsp</result>
+			<result name="input" type="redirect">/login.jsp</result>
+			<result name="regSuc" type="redirect">/login.jsp</result>
+			<result name="updateSuc" type="redirect">/users/editUser.jsp</result>
+			<result name="allUser" type="dispatcher">/adminControl/showAlluser.jsp</result>
+		</action>
+		
+<!--**************************************** 公共界面 ******************************************* -->
+		<action name="temp_*" class="tempAction" method="{1}">
+			<result name="xtjs">/temp/xtjs.jsp</result>
+			<result name="tblc">/temp/tblc.jsp</result>
+			<result name="cjwt">/temp/cjwt.jsp</result>
+		</action>
+		
+<!--**************************************** 该用户名已注册 ****************************************-->	
+		<action name="checkName" class="userAction" method="textajax"></action>
+		<action name="menu" class="userAction" method="menu"></action>
+		
+<!--**************************************** 多条件查询  ****************************************-->	
+		<action name="multiQueryAction" class="multiQueryAction" method="doQuery">
+			<result name="success">/adminControl/tjcx.jsp</result>
+		</action>
+
+<!--**************************************** 用户角色管理 ****************************************-->	
+		<action name="showRole" class="roleAction" method="showRole">
+			<result name="showRole" type="dispatcher">/adminControl/showAllRole.jsp</result>
+		</action>
+		
+<!--**************************************** 用户权限管理 ****************************************-->	
+		<action name="showRight" class="rightAction" method="showRight">
+			<result name="showRight" type="dispatcher">/adminControl/showAllRight.jsp</result>
+		</action>
+	
+<!--**************************************** 需求管理 ****************************************-->		
+		<action name="showDemand" class="demandAction" method="showDemand">
+			<result name="showDemand" type="dispatcher">/adminControl/showAllDemand.jsp</result>
+		</action>
+<!--**************************************** 用户需求管理 ****************************************-->	
+
+		<action name="Demand_*" class="demandAction" method="{1}">
+			<result name="addDemand" type="redirect">/users/fillin.jsp</result>
+			<result name="modifyDemand" type="dispatcher">/showTable/showTable_Edit.jsp</result><!-- 显示企业用户未提交的表 -->
+			<result name="showDemand" type="dispatcher">/adminControl/tjcx.jsp</result><!-- 显示企业用户提交的表 -->
+			<result name="showDemand_unTJ" type="dispatcher">/showTable/showTable_Edit.jsp</result>
+			<result name="showDemand_unSH" type="dispatcher">/showTable/showTable_unSH.jsp</result>
+			<result name="showDemand_ySH" type="dispatcher">/showTable/showTable_ySH.jsp</result>
+		</action>
+		
+		<action name="showTable" class="demandAction" method="findDemand">      <!-- 企业用户界面显示未提交、审核的表 -->
+			<result name="findDemand" type="dispatcher">/showTable/showTable.jsp</result>
+		</action>
+		
+		<action name="showTable_yhus" class="demandAction" method="findDemand">
+			<result name="findDemand" type="dispatcher">/showTable/showTable_yhus.jsp</result>		
+		</action>
+		
+		<action name="deleteDemand" class="deleteDemand" method="deleteDemand">
+			<result name="deleteSuc" type="dispatcher">/showTable/showTable_Edit.jsp</result>
+		</action>
+		
+		<action name="updateDemand" class="updateDemand" method="updateDemand">
+			<result name="updateSuc" type="redirect">/showTable/showTable_unCommit.jsp</result>
+		</action>	
+<!--**************************************** 审核人员需求管理  ****************************************-->	
+
+		<!-- 审核用户界面显示相关表 -->
+		<action name="sh_*" class="shAction" method="{1}">
+			<result name="showDemand_yXH" type="dispatcher">/adminControl/showTable_yXS.jsp</result>
+			<result name="showDemand_unXH" type="dispatcher">/adminControl/showTable_unXS.jsp</result>
+			<result name="findDemand" type="redirect">/adminControl/showTable_s.jsp</result>
+			<result name="showDemand_yBH" type="dispatcher">/adminControl/showTable_yBS.jsp</result>
+			<result name="showDemand_unBH" type="dispatcher">/adminControl/showTable_unBS.jsp</result>
+		</action>
+		
+		<action name="modifyXSDemand" class="shAction" method="modifyDemand">
+			<result name="modifyDemand" type="redirect">/adminControl/showTable_unXS.jsp</result>
+		</action>
+		
+		<action name="modifyBSDemand" class="shAction" method="modifyDemand">
+			<result name="findDemand" type="redirect">/adminControl/showTable_unBS.jsp</result>
+		</action>
+		
+		<!-- 审核用户界面提交审核结果 -->
+		<action name="updateDemand_xs" class="updateSHAction" method="updateDemand">
+			<result name="updateSuc" type="dispatcher">/adminControl/showTable_s.jsp</result>
+		</action>
+		
+		<action name="updateDemand_bs" class="updateSHAction" method="updateDemand">
+			<result name="updateSuc" type="dispatcher">/adminControl/showTable_ss.jsp</result>
+		</action>
+	</package>
+	
+<!--**************************************** 三级联动  **************************************** -->	
+	<package name="ajax" extends="json-default">
+		<action name="Gm1" class="classifyAction" method="FirstGm">
+			<result name="Success" type="json"></result>
+		</action>
+		<action name="Gm2" class="classifyAction" method="SecondGm">
+			<result name="Success" type="json"></result>
+		</action>
+		<action name="Gm3" class="classifyAction" method="ThirdGm">
+			<result name="Success" type="json"></result>
+		</action>
+		
+		<action name="Classify1" class="classifyAction" method="FirstSubject">
+			<result name="Success" type="json"></result>
+		</action>
+		<action name="Classify2" class="classifyAction" method="SecondSubject">
+			<result name="Success" type="json"></result>
+		</action>
+		<action name="Classify3" class="classifyAction" method="ThirdSubject">
+			<result name="Success" type="json"></result>
+		</action>
+	</package>
+</struts>    

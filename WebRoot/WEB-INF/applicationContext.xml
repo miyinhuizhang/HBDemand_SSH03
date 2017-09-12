@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+<!--*******************************************action层*********************************************-->
+	
+	<!-- UserAction userAction = new UserAction() -->
+	<bean id="userAction" class="com.dbc.action.user.UserAction">
+		<property name="userService" ref="userServiceImpl"/>
+		<property name="rightService" ref="rightServiceImpl"/>
+	</bean>
+	
+	<bean id="roleAction" class="com.dbc.action.user.RoleAction">
+		<property name="roleService" ref="roleServiceImpl"/>
+	</bean>
+	
+	<bean id="rightAction" class="com.dbc.action.user.RightAction">
+		<property name="rightService" ref="rightServiceImpl"/>
+	</bean>
+	
+	<bean id="tempAction" class="com.dbc.action.user.TempAction">
+	</bean>
+	
+	<bean id="multiQueryAction" class="com.dbc.action.shuser.MultiQueryAction">
+ 		<property name="multiQueryService" ref="multiQueryServiceImpl"/>
+  	</bean>
+	
+	<bean id="demandAction" class="com.dbc.action.demand.DemandAction">
+		<property name="demandService" ref="demandServiceImpl"/>
+	</bean>
+	
+	<bean id="deleteDemand" class="com.dbc.action.demand.DeleteDemand">
+		<property name="demandService" ref="demandServiceImpl"/>
+	</bean>
+	
+	<bean id="updateDemand" class="com.dbc.action.demand.UpdateDemand">
+		<property name="demandService" ref="demandServiceImpl"/>
+	</bean>
+	
+	<bean id="shAction" class="com.dbc.action.shuser.SHAction">
+		<property name="demandService" ref="demandServiceImpl"/>
+	</bean>
+	
+	<bean id="updateSHAction" class="com.dbc.action.shuser.UpdateSHAction">
+		<property name="demandService" ref="demandServiceImpl"/>
+	</bean>
+
+	<bean id="classifyAction" class="com.dbc.action.demand.ClassifyAction">
+		<property name="classifyService" ref="classifyServiceImpl"/>
+	</bean>
+	
+<!--*****************************************service层*********************************************-->
+	
+	<bean id="userServiceImpl" class="com.dbc.service.impl.UserServiceImpl">
+		<property name="userDao" ref="userDaoImpl"/>
+	</bean>
+	
+	<bean id="roleServiceImpl" class="com.dbc.service.impl.RoleServiceImpl">
+		<property name="roleDao" ref="roleDaoImpl"/>
+	</bean>
+	
+	<bean id="rightServiceImpl" class="com.dbc.service.impl.RightServiceImpl">
+		<property name="rightDao" ref="rightDaoImpl"/>
+	</bean>
+
+	<bean id="demandServiceImpl" class="com.dbc.service.impl.DemandServiceImpl">
+		<property name="demandDao" ref="demandDaoImpl"/>
+	</bean>
+	
+	<bean id="classifyServiceImpl" class="com.dbc.service.impl.ClassifyServiceImpl">
+		<property name="classifyDao" ref="classifyDaoImpl"/>
+	</bean>	
+	
+	<bean id="multiQueryServiceImpl" class="com.dbc.service.impl.MultiQueryServiceImpl">
+		<property name="multiQueryDao" ref="multiQueryDaoImpl"/>
+	</bean>
+	
+<!--*******************************************dao层***********************************************-->
+   
+    <bean id="userDaoImpl" class="com.dbc.dao.impl.UserDAOImpl">
+    	<property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    
+    <bean id="roleDaoImpl" class="com.dbc.dao.impl.RoleDAOImpl">
+    	<property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    
+     <bean id="rightDaoImpl" class="com.dbc.dao.impl.RightDAOImpl">
+    	<property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    
+    <bean id="adminDaoImpl" class="com.dbc.dao.impl.AdminDAOImpl">
+    	<property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    
+    <bean id="demandDaoImpl" class="com.dbc.dao.impl.DemandDAOImpl">
+    	<property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    
+     <bean id="classifyDaoImpl" class="com.dbc.dao.impl.ClassifyDAOImpl">
+    	<property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+     <bean id="multiQueryDaoImpl" class="com.dbc.dao.impl.MultiQueryDAOImpl">
+    	<property name="sessionFactory" ref="sessionFactory"/>
+     </bean>
+    
+<!--******************************************* 数据库配置****************************************** -->
+	
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+    destroy-method="close"><!--设置为close使Spring容器关闭同时数据源能够正常关闭，以免造成连接泄露  -->
+    	<property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
+    	<property name="url" value="jdbc:sqlserver://localhost:1433;databaseName=DemandConnection" />
+    	<property name="username" value="sa" />
+    	<property name="password" value="sasa" />
+    	<property name="defaultReadOnly" value="false" /><!-- 设置为只读状态，配置读写分离时，读库可以设置为true -->
+    
+    </bean>
+      
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource"/> 
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">
+					org.hibernate.dialect.SQLServerDialect
+				</prop>
+				<!-- 指定显示sql语句 -->
+				<prop key="hibernate.show_sql">true</prop>  
+				<!-- 不格式化sql语句 -->
+                <prop key="hibernate.format_sql">false</prop>    
+			</props>
+		</property>
+	<property name="mappingResources">
+		<list>
+			<value>com/dbc/entity/AreaKind.hbm.xml</value>
+			<value>com/dbc/entity/SubjectKind.hbm.xml</value>
+			<value>com/dbc/entity/EcoKind.hbm.xml</value>			
+			<value>com/dbc/entity/TbComand.hbm.xml</value>
+			<value>com/dbc/entity/GovKind.hbm.xml</value>
+			<value>com/dbc/entity/TbFpdepartment.hbm.xml</value>
+			<value>com/dbc/entity/Xkfl.hbm.xml</value>
+			<value>com/dbc/entity/Gmjjhy.hbm.xml</value>
+			<value>com/dbc/entity/SysUser.hbm.xml</value>
+			<value>com/dbc/entity/SysRole.hbm.xml</value>
+			<value>com/dbc/entity/SysRight.hbm.xml</value></list>
+	</property></bean></beans>
